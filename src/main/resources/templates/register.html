@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .register-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group input {
+            width: 85%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+        }
+        .button-group input {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            cursor: pointer;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="register-container">
+    <h1>Please Register</h1>
+
+    <div class="error-message">
+        <p></p>
+    </div>
+
+    <form>
+        <div class="input-group">
+            <input type="text" name="email" placeholder="Email" required/>
+        </div>
+
+        <div class="input-group">
+            <input type="password" name="password" placeholder="Password" required/>
+        </div>
+
+        <div class="button-group">
+            <input type="submit" value="Register"/>
+            <div>
+                <p style="display: inline;">or</p>
+                <a href="/login" style="display: inline;">log in</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelector("form").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+
+            const email = document.querySelector("input[name='email']").value;
+            const password = document.querySelector("input[name='password']").value;
+
+            fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.text();
+            })
+            .then(data => {
+                // Manejo de respuesta exitosa
+                alert(data); // Por ejemplo, mostrar un mensaje de éxito
+                window.location.href = '/login'; // Redireccionar a login
+            })
+            .catch(err => {
+                let errorMessage = "Error";
+
+                if (err && typeof err === 'object') {
+                    errorMessage = err.message;
+                }
+                const errorElement = document.querySelector(".error-message");
+                errorElement.innerText = errorMessage;
+                errorElement.style.display = "block";
+            });
+        });
+    });
+</script>
+</body>
+</html>

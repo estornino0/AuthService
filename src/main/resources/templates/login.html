@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Please Log In</title>
+    <style>
+        body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        }
+        .login-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        text-align: center;
+        }
+        h1 {
+        margin-bottom: 20px;
+        }
+        .input-group {
+        margin-bottom: 15px;
+        }
+        .input-group input {
+        width: 85%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        }
+        .button-group {
+        display: flex;
+        justify-content: space-between;
+        }
+        .button-group input {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #fff;
+        background-color: #007bff;
+        cursor: pointer;
+        }
+        .access-token {
+        width: 100%;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        }
+
+        .error-message {
+        color: red;
+        margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h1>Please Log In</h1>
+
+    <div class="error-message" style="display: none;">
+        <p id="error-message-text"></p>
+    </div>
+
+    <form>
+        <div class="input-group">
+            <input type="text" name="email" placeholder="Email" required/>
+        </div>
+        <div class="input-group">
+            <input type="password" name="password" placeholder="Password" required/>
+        </div>
+        <div class="button-group">
+            <input type="submit" value="Log in"/>
+            <div>
+                <p style="display: inline;">or</p>
+                <a href="/register" style="display: inline;">register</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="success-message" style="display:none;">
+        <h3>Authentication Success</h3>
+        <p>Your Access Token is:</p>
+        <input type="text" class="access-token" readonly/>
+        <p><small>Keep it safe!</small></p>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelector("form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const email = document.querySelector("input[name='email']").value;
+            const password = document.querySelector("input[name='password']").value;
+
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Data: ");
+                console.log(data);
+                const errorElement = document.querySelector(".error-message");
+                errorElement.style.display = "none";
+
+                const successElement = document.querySelector(".success-message");
+                successElement.style.display = "block";
+
+                const tokenElement = successElement.querySelector(".access-token");
+                tokenElement.value = data.access_token;
+            })
+            .catch(err => {
+                let errorMessage = "Authentication error. Verify your credentials.";
+
+                if (err && typeof err === 'object') {
+                    errorMessage = err.message;
+                }
+                const errorElement = document.querySelector(".error-message");
+                errorElement.innerText = errorMessage;
+                errorElement.style.display = "block";
+            });
+        });
+    });
+</script>
+</body>
+</html>
