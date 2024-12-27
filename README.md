@@ -25,9 +25,11 @@ Alternatively, an H2 in-memory database can be used for development purposes by 
 ### How It Works
 
 + Login: When users enter their email and password, the frontend sends a POST request to the backend API. If the credentials are valid, the backend returns an access token. If the credentials are invalid, the backend sends an error message. 
-+ Register: New users can register by providing an email and password. The backend stores the credentials in the database and returns a success message upon successful registration.
++ Register: New users can register by providing an email and password. As with login, when users enter a valid email and password, the frontend sends a POST request to the backend API The backend stores the credentials in the database and returns a success message upon successful registration.
+The API by itself can be used to log in and register users, and the frontend provides a simple user interface for these operations.
 
-+ The paths /api/auth/login, /api/auth/register, /login, and /register are unprotected and do not require a JWT token. Other paths are protected and require a valid JWT token for access. In this project, the only protected endpoint is /api/protected.
++ The paths /api/auth/login, /api/auth/register, /login, and /register are unprotected and do not require a JWT token. Other paths are protected and require a valid JWT token for access. 
++ In this project, the only protected endpoint is /api/protected, that can only be accessed providing a valid JWT token.
 
 ### Classes
 + **JWTUtil:** Handles JWT creation and validation.
@@ -136,8 +138,15 @@ This application uses a SQL Server database with Hibernate as the ORM framework 
 
 ### Protected API Endpoint
 #### 1.  **GET `/api/protected`**
-
-- **Response (Failure - Invalid JWT Token):**
+- **Description:** Access protected endpoint only accessible with valid JWT token.
+- **Request Headers:**
+  ```json
+     {
+        "Authorization": "Bearer generated_JWT_Token"
+     }
+  ``` 
+  
+- **Response (Success - Valid JWT Token):**
     - **Status Code:** 200 Ok
     - **Body:**
   ```json

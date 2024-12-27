@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -29,14 +28,8 @@ public class JWTAuthFilter extends OncePerRequestFilter{
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
         String path = request.getServletPath();
-//        if (path.equals("/api/auth/login") || path.equals("/api/auth/register")
-//            || path.equals("/login") || path.equals("/register")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-        System.out.println("en el filtro");
-        // Puedo intentar autorizar al usuario sin más y más tarde handleo la excepción
         String authHeader = request.getHeader("Authorization");
         if(authHeader == null || authHeader.isBlank() || !authHeader.startsWith("Bearer ")) {
             // No Bearer Header
@@ -75,6 +68,5 @@ public class JWTAuthFilter extends OncePerRequestFilter{
         String path = request.getServletPath();
         return path.matches("/api/auth/(login|register)") ||
                 path.matches("/(login|register)");
-//        return uriMatcher.matches(request);
     }
 }

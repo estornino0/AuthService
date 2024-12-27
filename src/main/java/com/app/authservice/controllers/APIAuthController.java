@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController()
+@RequestMapping("/api/auth")
 public class APIAuthController {
 
     @Autowired
@@ -29,7 +30,7 @@ public class APIAuthController {
 
     @Autowired private JWTUtil JWTUtil;
 
-    @PostMapping("/api/auth/login")
+    @PostMapping("/login")
     public ResponseEntity<Object> loginHandler(@Valid @RequestBody UserDto userDto, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             return bindingErrorResponse(bindingResult);
@@ -55,7 +56,7 @@ public class APIAuthController {
         }
     }
 
-    @PostMapping("/api/auth/register")
+    @PostMapping("/register")
     public ResponseEntity<Object> registerHandler(@Valid @RequestBody UserDto userDto, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             return bindingErrorResponse(bindingResult);
